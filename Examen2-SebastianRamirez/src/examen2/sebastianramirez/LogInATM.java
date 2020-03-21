@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.Random;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -109,6 +110,10 @@ public class LogInATM extends javax.swing.JFrame {
         jSpinner5 = new javax.swing.JSpinner();
         jButton14 = new javax.swing.JButton();
         jLabel22 = new javax.swing.JLabel();
+        OtrosUsuarios = new javax.swing.JDialog();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        Tabla_Usuarios = new javax.swing.JTable();
+        jButton15 = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         ComboBox_ATM = new javax.swing.JComboBox<>();
@@ -133,6 +138,11 @@ public class LogInATM extends javax.swing.JFrame {
 
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/examen2/sebastianramirez/icons8-money-box-100.png"))); // NOI18N
         jButton4.setText("Ingresar Dinero a otra persona");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton4MouseClicked(evt);
+            }
+        });
 
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/examen2/sebastianramirez/icons8-plus-100.png"))); // NOI18N
         jButton5.setText("Crear Cuenta");
@@ -552,6 +562,48 @@ public class LogInATM extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
+        Tabla_Usuarios.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "ID", "Nombre", "Apellido"
+            }
+        ));
+        Tabla_Usuarios.setToolTipText("");
+        jScrollPane1.setViewportView(Tabla_Usuarios);
+
+        jButton15.setText("Depositar");
+        jButton15.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton15MouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout OtrosUsuariosLayout = new javax.swing.GroupLayout(OtrosUsuarios.getContentPane());
+        OtrosUsuarios.getContentPane().setLayout(OtrosUsuariosLayout);
+        OtrosUsuariosLayout.setHorizontalGroup(
+            OtrosUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(OtrosUsuariosLayout.createSequentialGroup()
+                .addGroup(OtrosUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(OtrosUsuariosLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 327, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(OtrosUsuariosLayout.createSequentialGroup()
+                        .addGap(115, 115, 115)
+                        .addComponent(jButton15)))
+                .addContainerGap(17, Short.MAX_VALUE))
+        );
+        OtrosUsuariosLayout.setVerticalGroup(
+            OtrosUsuariosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(OtrosUsuariosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton15)
+                .addContainerGap(70, Short.MAX_VALUE))
+        );
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButton1.setText("Crear ATM");
@@ -731,19 +783,51 @@ public class LogInATM extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton13MouseClicked
 
     private void jButton14MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton14MouseClicked
-        usuarioActivo.setSaldo((int)jSpinner4.getValue()*100+(int)jSpinner5.getValue()*500);
-        jSpinner4.setValue(0);
-        jSpinner5.setValue(0);
-        Depositar.dispose();
-        Cliente.setVisible(true);
+        if (turno) {
+            usuarioActivo.setSaldo((int)jSpinner4.getValue()*100+(int)jSpinner5.getValue()*500);
+            jSpinner4.setValue(0);
+            jSpinner5.setValue(0);
+            Depositar.dispose();
+            Cliente.setVisible(true);
+        }   
     }//GEN-LAST:event_jButton14MouseClicked
 
     private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        turno = true;
         Depositar.pack();
         Depositar.setLocationRelativeTo(this);
         Depositar.setVisible(true);
         Cliente.setVisible(false);
     }//GEN-LAST:event_jButton2MouseClicked
+
+    private void jButton15MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton15MouseClicked
+        turno = false;
+        if (turno == false) {
+            int row = Tabla_Usuarios.getSelectedRow();
+            Depositar.pack();
+            Depositar.setLocationRelativeTo(this);
+            Depositar.setVisible(true);
+            int cantidadTotal = (int) jSpinner4.getValue() * 100 + (int) jSpinner5.getValue() * 500;
+            int saldo = cliente.get(row).getSaldo();
+            cliente.get(row).setSaldo(saldo);
+            jSpinner4.setValue(0);
+            jSpinner5.setValue(0);
+        }
+        Depositar.dispose();
+        Cliente.setVisible(true);
+    }//GEN-LAST:event_jButton15MouseClicked
+
+    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
+        DefaultTableModel model = (DefaultTableModel)Tabla_Usuarios.getModel();
+        for (Cliente c : cliente) {
+            Object[] rowData = {c.getID(),c.getPrimer_nombre(),c.getPrimer_apellido()};
+            model.addRow(rowData);
+        }
+        OtrosUsuarios.pack();
+        OtrosUsuarios.setLocationRelativeTo(this);
+        OtrosUsuarios.setVisible(true);
+        Cliente.setVisible(false);
+    }//GEN-LAST:event_jButton4MouseClicked
 
     /**
      * @param args the command line arguments
@@ -789,7 +873,9 @@ public class LogInATM extends javax.swing.JFrame {
     private javax.swing.JDialog LogInATM;
     private javax.swing.JDialog NuevoATM;
     private javax.swing.JDialog NuevoUsuario;
+    private javax.swing.JDialog OtrosUsuarios;
     private javax.swing.JDialog Retiro;
+    private javax.swing.JTable Tabla_Usuarios;
     private javax.swing.JTextField Usuario_PApellido;
     private javax.swing.JTextField Usuario_PNombre;
     private javax.swing.JTextField Usuario_SApellido;
@@ -800,6 +886,7 @@ public class LogInATM extends javax.swing.JFrame {
     private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton13;
     private javax.swing.JButton jButton14;
+    private javax.swing.JButton jButton15;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
@@ -834,6 +921,7 @@ public class LogInATM extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JRadioButton jRadioButton1;
     private javax.swing.JRadioButton jRadioButton2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner jSpinner1;
     private javax.swing.JSpinner jSpinner2;
     private javax.swing.JSpinner jSpinner3;
@@ -843,6 +931,7 @@ public class LogInATM extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private com.toedter.calendar.JYearChooser jYearChooser1;
     // End of variables declaration//GEN-END:variables
+    boolean turno;
     Random r = new Random();
     ArrayList<Cliente> cliente;
     ArrayList<Mantenimiento>mantenimiento;
